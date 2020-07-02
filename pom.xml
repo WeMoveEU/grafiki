@@ -5,8 +5,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>eu.wemove.confluence.metabase</groupId>
-    <artifactId>metabase</artifactId>
+    <groupId>eu.wemove.confluence</groupId>
+    <artifactId>grafiki</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
     <organization>
@@ -14,8 +14,8 @@
         <url>http://www.wemove.eu</url>
     </organization>
 
-    <name>metabase</name>
-    <description>This is the eu.wemove.confluence.metabase:metabase plugin for Atlassian Confluence.</description>
+    <name>grafiki</name>
+    <description>This is the eu.wemove.confluence:grafiki plugin for Atlassian Confluence.</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -26,9 +26,25 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>confluence</artifactId>
             <version>${confluence.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.templaterenderer</groupId>
+            <artifactId>atlassian-template-renderer-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -38,7 +54,6 @@
             <version>${atlassian.spring.scanner.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-runtime</artifactId>
@@ -51,6 +66,12 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+          <version>2.1</version>
+          <scope>provided</scope>
         </dependency>
 
 				<dependency>
@@ -79,6 +100,25 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.platform</groupId>
+                <artifactId>platform</artifactId>
+                <version>${platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.platform</groupId>
+                <artifactId>third-party</artifactId>
+                <version>${platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -98,7 +138,7 @@
 
                         <!-- Add package to export here -->
                         <Export-Package>
-                            eu.wemove.confluence.metabase.api,
+                            eu.wemove.confluence.grafiki.api,
                         </Export-Package>
 
                         <!-- Add package import here -->
@@ -140,6 +180,7 @@
     </build>
 
     <properties>
+        <platform.version>3.0.0</platform.version>
         <confluence.version>6.14.0</confluence.version>
         <confluence.data.version>6.14.0</confluence.data.version>
         <amps.version>8.0.0</amps.version>

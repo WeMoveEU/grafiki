@@ -7,18 +7,31 @@
         <param name="plugin-logo">images/pluginLogo.png</param>
     </plugin-info>
 
-    <xhtml-macro name="metabase-chart" class="eu.wemove.confluence.metabase.MetabaseMacro" key="metabase-macro">
-      <parameters/>
+    <xhtml-macro name="metabase-chart" class="eu.wemove.confluence.grafiki.MetabaseMacro" key="metabase-macro">
+      <parameters>
+        <parameter name="question" type="string" required="true"/>
+      </parameters>
     </xhtml-macro>
 
-    <!-- add our i18n resource -->
-    <resource type="i18n" name="i18n" location="metabase"/>
+    <servlet key="admin-servlet" class="eu.wemove.confluence.grafiki.AdminServlet">
+      <url-pattern>/grafiki/admin</url-pattern>
+    </servlet>
+
+		<rest key="rest" path="/grafiki-admin" version="1.0">
+			<description>Provides REST resources for the admin UI.</description>
+		</rest>
+
+    <resource type="i18n" name="i18n" location="grafiki"/>
     
     <!-- add our web resources -->
-    <web-resource key="metabase-resources" name="metabase Web Resources">
+    <web-resource key="admin-resources" name="Grafiki Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <resource type="download" name="images/" location="/images"/>
-        <context>metabase</context>
+        <resource type="download" name="grafiki-admin-ui.js" location="/js/grafiki-admin-ui.js"/>
     </web-resource>
 
+		<web-item key="conf-menu-item" name="Grafiki Admin" section="system.admin/configuration" weight="1"> 
+			<description>Link to grafiki-admin page.</description> 
+			<label key="grafiki.admin.menu" /> 
+			<link linkId="grafiki-admin-link">/plugins/servlet/grafiki/admin</link> 
+		</web-item> 
 </atlassian-plugin>
