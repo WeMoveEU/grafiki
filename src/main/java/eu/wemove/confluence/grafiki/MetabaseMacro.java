@@ -1,5 +1,6 @@
 package eu.wemove.confluence.grafiki;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -19,6 +20,9 @@ import io.fusionauth.jwt.domain.JWT;
 import io.fusionauth.jwt.hmac.HMACSigner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
+import org.springframework.util.MultiValueMap;
 
 @Scanned
 public class MetabaseMacro implements Macro {
@@ -39,7 +43,7 @@ public class MetabaseMacro implements Macro {
     String secretKey = (String) settings.get("grafiki.metabase.secretKey");
 
     String questionUrl = params.get("question");
-    Pattern questionPattern = Pattern.compile(baseURL + "/question/([0-9]+).*");
+    Pattern questionPattern = Pattern.compile(baseURL + "/question/([0-9]+)(.*)");
     Matcher m = questionPattern.matcher(questionUrl);
     if (!m.matches()) {
       throw new MacroExecutionException("Invalid question URL");
@@ -49,7 +53,19 @@ public class MetabaseMacro implements Macro {
     Map<String, Integer> resourceClaim = new HashMap<String, Integer>();
     resourceClaim.put("question", questionId);
 
-    Map<String, String> paramsClaim = new HashMap<String, String>();
+    Map<String, Object> paramsClaim = new HashMap<String, Object>();
+    if (m.group(2).length() > 0) {
+      UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(questionUrl).build();
+      MultiValueMap<String, String> qParams = uriComponents.getQueryParams();
+      for (String param: qParams.keySet()) {
+        List<String> values = qParams.get(param);
+        if (values.size() > 1) {
+          paramsClaim.put(param, values);
+        } else {
+          paramsClaim.put(param, values.get(0));
+        }
+      }
+    }
 
 		Signer signer = HMACSigner.newSHA256Signer(secretKey);
 		JWT jwt = new JWT().addClaim("resource", resourceClaim).addClaim("params", paramsClaim);
